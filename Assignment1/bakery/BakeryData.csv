@@ -1,12 +1,13 @@
 TransactionNo,Items,DateTime,Daypart,DayType
 1,Bread,2016-10-30 09:58:11,Morning,Weekend
+1,Jam,2016-10-30 09:58:11,Morning,Weekend
+1,Cookies,2016-10-30 10:07:57,Morning,Weekend
 2,Scandinavian,2016-10-30 10:05:34,Morning,Weekend
 2,Scandinavian,2016-10-30 10:05:34,Morning,Weekend
+2,Scandinavian,2016-10-30 10:05:34,Morning,Weekend
+2,Blaa,2016-10-30 10:05:34,Morning,Weekend
 2,Jam,2016-10-30 10:05:34,Morning,Weekend
 3,Hot chocolate,2016-10-30 10:07:57,Morning,Weekend
 3,Jam,2016-10-30 10:07:57,Morning,Weekend
 3,Cookies,2016-10-30 10:07:57,Morning,Weekend
-3,Cookies,2016-10-30 10:07:57,Morning,Weekend
-3,Blaaa,2016-10-30 10:07:57,Morning,Weekend
-
-
+3,Blaa,2016-10-30 10:07:57,Morning,Weekend
