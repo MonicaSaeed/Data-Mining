@@ -82,18 +82,44 @@ def combinations_set(min_support_transaction_items):
 
 
 # function find strong association rules between items in transactions by check if min confidend > number of transactions containing both items(x,y) / number of transactions containing item(x)
-def strong_item_sets(frequent_items_final, left_subset,right_subset, min_confidence):
-    for left_subset, right_subset in list(combinations(left_subset, right_subset))[:]:
-        print('----------------------+++++++++')
-        print(f'{left_subset} => {right_subset}')
-        print('----------------------++++++++++++++')
-        left_subset = set(left_subset)
-        right_subset = set(right_subset)
-        left_subset_transaction_no = frequent_items_final[left_subset]
-        left_right_subset_transaction_no = frequent_items_final[left_subset + right_subset]
-        confidence = len(left_right_subset_transaction_no) / len(left_subset_transaction_no)
-        if confidence >= min_confidence:
-            print(f'{left_subset} => {right_subset} : {confidence}')
+def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
+    if len(left_subset) == 1:
+        left_subset = left_subset[0]
+    else:
+        left_subset = ','.join(left_subset)
+    if len(right_subset) == 1:
+        right_subset = right_subset[0]
+    else:
+        right_subset = ','.join(right_subset)
+    print('left_subset+++++++++++++++++++', left_subset)
+    print('right_subset++++++++++++++', right_subset)
+
+    left_subset_transaction_no = {}
+    for item, transaction_no in vertical_items.items():
+        if item in left_subset:
+            left_subset_transaction_no[item] = transaction_no
+    print('left_subset_transaction_no', left_subset_transaction_no)
+    
+    # find all common transaction_no of left_subset_transaction_no
+    left_subset_transaction_no = set.intersection(*left_subset_transaction_no.values())
+    print('common_left_subset_transaction_no', left_subset_transaction_no)
+    left_count = len(left_subset_transaction_no)
+
+    right_subset_transaction_no = {}
+    for item, transaction_no in vertical_items.items():
+        if item in right_subset:
+            right_subset_transaction_no[item] = transaction_no
+    
+    # Merge the transaction numbers from both subsets
+    left_right_subset_transaction_no = left_subset_transaction_no.union(right_subset_transaction_no.values())
+    left_right_subset_transaction_no = set.intersection(*left_right_subset_transaction_no)
+    
+    left_right_cont = len(left_right_subset_transaction_no)
+    
+    confidence = left_right_cont / left_count
+    print('confidence', confidence)
+    if confidence >= min_confidence:
+        print(f'{left_subset} => {right_subset} : {confidence}')
 
 
 file_path = 'bakery/BakeryData.csv'
@@ -123,15 +149,21 @@ print('Frequent Items final++++++++++')
 for item, transaction_no in list(frequent_items_final.items())[:]:
     print(f'{item}: {transaction_no}')
 print('-----------------------')
+
 print('Combinations of Frequent Items+++++++++++++++')
 combinations = combinations_set(frequent_items_final)
 for left_subset, right_subset in list(combinations.items())[:]:
     print(f'{left_subset} => {right_subset}')
 print('-----------------------')
+
 # print('Strong Association Rules')
 print ('Strong Association Rules++++++++++++++++++++++++++++++')
 min_confidence = 0.5
-for left_subset, right_subset in list(combinations.items())[:]:
-    print(left_subset, right_subset)
-    strong_item_sets(frequent_items_final, left_subset, right_subset, min_confidence)
-
+# loop for all combinations of left and thin if right subset lenght>1 then loop for all combinations of right subset
+for i in combinations:
+    left_subset = i
+    for j in combinations[i]:
+        right_subset = j
+        print('left_subset',left_subset)
+        print('right_subset',right_subset)
+        strong_item_sets(vertical_items, left_subset, right_subset, min_confidence)
