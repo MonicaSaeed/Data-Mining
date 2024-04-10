@@ -1,12 +1,18 @@
 import csv
 from itertools import combinations
-
-
-def read_csv_file(file_path):
+import tkinter as tk
+from tkinter import ttk
+def read_csv_file(file_path, percentage):
     data = []
     with open(file_path, 'r') as file:
         csv_reader = csv.DictReader(file)
-        for row in csv_reader:
+        total_rows = sum(1 for row in csv_reader)
+        rows_to_read = int(percentage / 100 * total_rows)
+        file.seek(0)  # Reset file pointer to read from the beginning
+        csv_reader = csv.DictReader(file)  # Reinitialize CSV reader
+        for index, row in enumerate(csv_reader):
+            if index >= rows_to_read:
+                break
             transaction_no = row['TransactionNo']
             items = row['Items']
             data.append((transaction_no, items))
@@ -64,7 +70,8 @@ def frequent_item_sets(vertical_items, min_support):
         return {}
     else:
         return new_items
-    
+
+
 def combinations_set(min_support_transaction_items):
     comb = {}
     for item, transaction_no in min_support_transaction_items.items():
@@ -79,7 +86,6 @@ def combinations_set(min_support_transaction_items):
             else:
                 comb[left_subset] = [right_subset]
     return comb
-
 
 # function find strong association rules between items in transactions by check if min confidend > number of transactions containing both items(x,y) / number of transactions containing item(x)
 def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
@@ -123,14 +129,13 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
 
 
 file_path = 'bakery/BakeryData.csv'
-csv_data = read_csv_file(file_path)
+csv_data = read_csv_file(file_path,100)
 transaction_items = collect_items_by_transaction(csv_data)
 vertical_items = vertical_format(transaction_items)
 # print all transaction items from vertical_format
 print('Vertical Items')
 for item, transaction_no in list(vertical_items.items())[:]:
     print(f'{item}: {transaction_no}')
-
 
 min_support = 2
 frequent_items = vertical_items
@@ -167,3 +172,4 @@ for i in combinations:
         print('left_subset',left_subset)
         print('right_subset',right_subset)
         strong_item_sets(vertical_items, left_subset, right_subset, min_confidence)
+        
