@@ -1,5 +1,6 @@
 import csv
 
+
 def read_csv_file(file_path):
     data = []
     with open(file_path, 'r') as file:
@@ -63,13 +64,40 @@ def frequent_item_sets(vertical_items, min_support):
     else:
         return new_items
 
-# function find strong association rules between items in transactions by check if min confidend > number of transactions containing both items(x,y) / number of transactions containing item(x)
-# def strong_item_sets(min_support_transaction_items, transaction_items, min_confidence):
+
+# function to get all possible subsets of a set
+comb = {}
+def get_subsets(l,r,n):
+    l.sort()
+    r.sort()
+    if n == 0:
+        return
+    if(len(l) > 0 and len(r) > 0):
+        ls = ''.join(l)
+        rs = ''.join(r)
+        if(ls in rs or rs in ls):
+            return
+        comb[ls] = (l,r)
+        comb[rs] = (r,l)
+    for i in range(len(l)):
+        get_subsets(l[:i] + l[i+1:], r + [l[i]], n-1)
     
+# function find strong association rules between items in transactions by check if min confidend > number of transactions containing both items(x,y) / number of transactions containing item(x)
+def strong_item_sets(min_support_transaction_items, transaction_items, min_confidence):
+    strong_item = {}
+    # for all min_support_transaction_items find all possible subsets
+    for item, transaction_no in min_support_transaction_items.items():
+        get_subsets(item.split(','),[],len(item.split(',')))
+        for i in comb:
+            l,r = comb[i]
+            print(' , '.join(l),'->',' , '.join(r))
+        # clear comb for next item
+        comb.clear()
 
 
-# Example usage:
-file_path ='bakery/BakeryData.csv'
+
+
+file_path = 'bakery/BakeryData.csv'
 csv_data = read_csv_file(file_path)
 transaction_items = collect_items_by_transaction(csv_data)
 vertical_items = vertical_format(transaction_items)
@@ -79,13 +107,7 @@ for item, transaction_no in list(vertical_items.items())[:]:
     print(f'{item}: {transaction_no}')
 
 
-# # print first 5 frequent items from frequent_item_sets
-# min_support = 2
-# frequent_items = frequent_item_sets(vertical_items, min_support)
-# print('Frequent Items final')
-# for item, transaction_no in list(frequent_items.items())[:]:
-#     print(f'{item}: {transaction_no}')
-min_support = 1
+min_support = 2
 frequent_items = vertical_items
 frequent_items_final = {}
 while True:
@@ -101,4 +123,9 @@ while True:
 print('Frequent Items final')
 for item, transaction_no in list(frequent_items_final.items())[:]:
     print(f'{item}: {transaction_no}')
-print('Strong Association Rules')
+
+
+# print('Strong Association Rules')
+print ('Strong Association Rules++++++++++++++++++++++++++++++')
+strong_item_sets(frequent_items_final, vertical_items, 0.5)
+
