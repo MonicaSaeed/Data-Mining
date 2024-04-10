@@ -1,4 +1,5 @@
 import csv
+from itertools import combinations
 
 
 def read_csv_file(file_path):
@@ -63,38 +64,36 @@ def frequent_item_sets(vertical_items, min_support):
         return {}
     else:
         return new_items
-
-
-# function to get all possible subsets of a set
-comb = {}
-def get_subsets(l,r,n):
-    l.sort()
-    r.sort()
-    if n == 0:
-        return
-    if(len(l) > 0 and len(r) > 0):
-        ls = ''.join(l)
-        rs = ''.join(r)
-        if(ls in rs or rs in ls):
-            return
-        comb[ls] = (l,r)
-        comb[rs] = (r,l)
-    for i in range(len(l)):
-        get_subsets(l[:i] + l[i+1:], r + [l[i]], n-1)
     
-# function find strong association rules between items in transactions by check if min confidend > number of transactions containing both items(x,y) / number of transactions containing item(x)
-def strong_item_sets(min_support_transaction_items, transaction_items, min_confidence):
-    strong_item = {}
-    # for all min_support_transaction_items find all possible subsets
+def combinations_set(min_support_transaction_items):
+    comb = {}
     for item, transaction_no in min_support_transaction_items.items():
-        get_subsets(item.split(','),[],len(item.split(',')))
-        for i in comb:
-            l,r = comb[i]
-            print(' , '.join(l),'->',' , '.join(r))
-        # clear comb for next item
-        comb.clear()
+        li = item.split(',')
+        left_subsets = []
+        for i in range(1, len(li)):
+            left_subsets.extend(combinations(li, i))
+        for left_subset in left_subsets:
+            right_subset = set(li) - set(left_subset)
+            if left_subset in comb:
+                comb[left_subset].append(right_subset)
+            else:
+                comb[left_subset] = [right_subset]
+    return comb
 
 
+# function find strong association rules between items in transactions by check if min confidend > number of transactions containing both items(x,y) / number of transactions containing item(x)
+def strong_item_sets(frequent_items_final, left_subset,right_subset, min_confidence):
+    for left_subset, right_subset in list(combinations(left_subset, right_subset))[:]:
+        print('----------------------+++++++++')
+        print(f'{left_subset} => {right_subset}')
+        print('----------------------++++++++++++++')
+        left_subset = set(left_subset)
+        right_subset = set(right_subset)
+        left_subset_transaction_no = frequent_items_final[left_subset]
+        left_right_subset_transaction_no = frequent_items_final[left_subset + right_subset]
+        confidence = len(left_right_subset_transaction_no) / len(left_subset_transaction_no)
+        if confidence >= min_confidence:
+            print(f'{left_subset} => {right_subset} : {confidence}')
 
 
 file_path = 'bakery/BakeryData.csv'
@@ -120,12 +119,19 @@ while True:
     else:
         frequent_items = new_frequent_items
 
-print('Frequent Items final')
+print('Frequent Items final++++++++++')
 for item, transaction_no in list(frequent_items_final.items())[:]:
     print(f'{item}: {transaction_no}')
-
-
+print('-----------------------')
+print('Combinations of Frequent Items+++++++++++++++')
+combinations = combinations_set(frequent_items_final)
+for left_subset, right_subset in list(combinations.items())[:]:
+    print(f'{left_subset} => {right_subset}')
+print('-----------------------')
 # print('Strong Association Rules')
 print ('Strong Association Rules++++++++++++++++++++++++++++++')
-strong_item_sets(frequent_items_final, vertical_items, 0.5)
+min_confidence = 0.5
+for left_subset, right_subset in list(combinations.items())[:]:
+    print(left_subset, right_subset)
+    strong_item_sets(frequent_items_final, left_subset, right_subset, min_confidence)
 
