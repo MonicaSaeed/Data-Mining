@@ -127,49 +127,87 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
     if confidence >= min_confidence:
         print(f'{left_subset} => {right_subset} : {confidence}')
 
+def vertical_data_format_algorithm(percent, support, confidence):
+    file_path = 'bakery/BakeryData.csv'
+    csv_data = read_csv_file(file_path,percent)
+    transaction_items = collect_items_by_transaction(csv_data)
+    vertical_items = vertical_format(transaction_items)
+    # print all transaction items from vertical_format
+    print('Vertical Items')
+    for item, transaction_no in list(vertical_items.items())[:]:
+        print(f'{item}: {transaction_no}')
 
-file_path = 'bakery/BakeryData.csv'
-csv_data = read_csv_file(file_path,100)
-transaction_items = collect_items_by_transaction(csv_data)
-vertical_items = vertical_format(transaction_items)
-# print all transaction items from vertical_format
-print('Vertical Items')
-for item, transaction_no in list(vertical_items.items())[:]:
-    print(f'{item}: {transaction_no}')
+    min_support = support
+    frequent_items = vertical_items
+    frequent_items_final = {}
+    while True:
+        new_frequent_items = frequent_item_sets(frequent_items, min_support)
+        if new_frequent_items == {}:
+            for item, transaction_no in frequent_items.items():
+                if len(transaction_no) >= min_support:
+                    frequent_items_final[item] = transaction_no
+            break
+        else:
+            frequent_items = new_frequent_items
 
-min_support = 2
-frequent_items = vertical_items
-frequent_items_final = {}
-while True:
-    new_frequent_items = frequent_item_sets(frequent_items, min_support)
-    if new_frequent_items == {}:
-        for item, transaction_no in frequent_items.items():
-            if len(transaction_no) >= min_support:
-                frequent_items_final[item] = transaction_no
-        break
-    else:
-        frequent_items = new_frequent_items
+    print('Frequent Items final++++++++++')
+    for item, transaction_no in list(frequent_items_final.items())[:]:
+        print(f'{item}: {transaction_no}')
+    print('-----------------------')
 
-print('Frequent Items final++++++++++')
-for item, transaction_no in list(frequent_items_final.items())[:]:
-    print(f'{item}: {transaction_no}')
-print('-----------------------')
+    print('Combinations of Frequent Items+++++++++++++++')
+    combinations = combinations_set(frequent_items_final)
+    for left_subset, right_subset in list(combinations.items())[:]:
+        print(f'{left_subset} => {right_subset}')
+    print('-----------------------')
 
-print('Combinations of Frequent Items+++++++++++++++')
-combinations = combinations_set(frequent_items_final)
-for left_subset, right_subset in list(combinations.items())[:]:
-    print(f'{left_subset} => {right_subset}')
-print('-----------------------')
+    # print('Strong Association Rules')
+    print ('Strong Association Rules++++++++++++++++++++++++++++++')
+    min_confidence = confidence / 100
+    # loop for all combinations of left and thin if right subset lenght>1 then loop for all combinations of right subset
+    for i in combinations:
+        left_subset = i
+        for j in combinations[i]:
+            right_subset = j
+            print('left_subset',left_subset)
+            print('right_subset',right_subset)
+            strong_item_sets(vertical_items, left_subset, right_subset, min_confidence)
+            
 
-# print('Strong Association Rules')
-print ('Strong Association Rules++++++++++++++++++++++++++++++')
-min_confidence = 0.5
-# loop for all combinations of left and thin if right subset lenght>1 then loop for all combinations of right subset
-for i in combinations:
-    left_subset = i
-    for j in combinations[i]:
-        right_subset = j
-        print('left_subset',left_subset)
-        print('right_subset',right_subset)
-        strong_item_sets(vertical_items, left_subset, right_subset, min_confidence)
-        
+def validate_confidence_input(P):
+    # Validate the input for confidence percentage
+    try:
+        value = float(P)
+        if 0 <= value <= 100:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+# Create the main window
+Windows = tk.Tk()
+Windows.title('Bakery')
+Windows.geometry('800x600')
+
+title_label_percent = ttk.Label(Windows, text='Percentage of data to read (0-100%)', font=('Arial', 20))
+title_label_percent.pack()
+validate_percent = Windows.register(validate_confidence_input)
+input_entry_percent = ttk.Entry(Windows, font=('Arial', 16), validate='key', validatecommand=(validate_percent, '%P'))
+input_entry_percent.pack()
+
+title_label_support = ttk.Label(Windows, text='min support', font=('Arial', 20))
+title_label_support.pack()
+input_entry_support = ttk.Entry(Windows, font=('Arial', 16))
+input_entry_support.pack()
+
+title_label_confidence = ttk.Label(Windows, text='min confidence (0-100%)', font=('Arial', 20))
+title_label_confidence.pack()
+validate_confidence = Windows.register(validate_confidence_input)
+input_entry_confidence = ttk.Entry(Windows, font=('Arial', 16), validate='key', validatecommand=(validate_confidence, '%P'))
+input_entry_confidence.pack()
+
+button = ttk.Button(Windows, text='Submit', command=lambda: vertical_data_format_algorithm(float(input_entry_percent.get()), int(input_entry_support.get()), float(input_entry_confidence.get())))
+button.pack()
+
+Windows.mainloop()
