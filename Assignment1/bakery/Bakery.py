@@ -94,7 +94,7 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
     else:
         left_subset = ','.join(left_subset)
     if len(right_subset) == 1:
-        right_subset = right_subset[0]
+        right_subset = next(iter(right_subset))
     else:
         right_subset = ','.join(right_subset)
     print('left_subset+++++++++++++++++++', left_subset)
@@ -117,8 +117,7 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
             right_subset_transaction_no[item] = transaction_no
     
     # Merge the transaction numbers from both subsets
-    left_right_subset_transaction_no = left_subset_transaction_no.union(right_subset_transaction_no.values())
-    left_right_subset_transaction_no = set.intersection(*left_right_subset_transaction_no)
+    left_right_subset_transaction_no = set.intersection(*[set(txns) for txns in [left_subset_transaction_no] + list(right_subset_transaction_no.values())])
     
     left_right_cont = len(left_right_subset_transaction_no)
     
