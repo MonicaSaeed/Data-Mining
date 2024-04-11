@@ -217,42 +217,35 @@ Windows.title('Bakery')
 Windows.geometry('500x600')
 Windows.configure(bg='#CDCDFB')  
 
-# Labels and Entry for Percentage
 title_label_percent = ttk.Label(Windows, text='Percentage', font=('Arial', 18), foreground='#1B0435')  # Set text color
 title_label_percent.grid(row=0, column=0, padx=10, pady=10)
 validate_precentage = Windows.register(validate_confidence_input)
 percentage_entry = ttk.Entry(Windows, font=('Arial', 18), validate='key', validatecommand=(validate_precentage, '%P'))
 percentage_entry.grid(row=0, column=1, padx=10, pady=10)
 
-# Labels and Entry for Support
 title_label_support = ttk.Label(Windows, text='Support', font=('Arial', 18), foreground='#1B0435')  # Set text color
 title_label_support.grid(row=1, column=0, padx=10, pady=10)
 support_entry = ttk.Entry(Windows, font=('Arial', 18))
 support_entry.grid(row=1, column=1, padx=10, pady=10)
 
-# Labels and Entry for Confidence
 title_label_confidence = ttk.Label(Windows, text='Confidence', font=('Arial', 18), foreground='#1B0435')  # Set text color
 title_label_confidence.grid(row=2, column=0, padx=10, pady=10)
 confidence_entry = ttk.Entry(Windows, font=('Arial', 18))
 confidence_entry.grid(row=2, column=1, padx=10, pady=10)
 
-# Button for Vertical Data
 vertical_button = ttk.Button(Windows, text='Vertical Data', command=show_vertical_data, style='my.TButton')
 vertical_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
-# Button for Frequent Item Sets
 frequent_item_sets_button = ttk.Button(Windows, text='Frequent Item Sets', command=show_frequent_item_sets, style='my.TButton')
 frequent_item_sets_button.grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
-# Button for Strong Item Sets
 strong_item_sets_button = ttk.Button(Windows, text='Strong Item Sets', command=show_strong_item_sets, style='my.TButton')
 strong_item_sets_button.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
-# Text widget for displaying results
 result_text = tk.Text(Windows, wrap="word", height=18, width=60, foreground='#1B0435', background='#FFFFFF')  
 result_text.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
 
-# Define custom style for buttons
+# style for buttons
 s = ttk.Style()
 s.configure('my.TButton', foreground='#1B0435', background='#E51093')  
 
