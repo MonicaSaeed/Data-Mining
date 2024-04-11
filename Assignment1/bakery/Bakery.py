@@ -2,6 +2,7 @@ import csv
 from itertools import combinations
 import tkinter as tk
 from tkinter import ttk
+
 def read_csv_file(file_path, percentage):
     data = []
     with open(file_path, 'r') as file:
@@ -159,15 +160,88 @@ def vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_ite
     return strong_item        
 
 
-vertical_items = vertical_data_format_algorithm_data(70)
-print('Vertical Items:')
-for item, transaction_no in list(vertical_items.items())[:]:
-    print(f'{item}: {transaction_no}')
-frequent_items_final = vertical_data_format_algorithm_frequent_item_sets(vertical_items, 2)
-print('Frequent Items:')
-for item, transaction_no in list(frequent_items_final.items())[:]:
-    print(f'{item}: {transaction_no}')
-strong_item = vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_items_final, 30)
-print('Strong Association Rules:')
-for item, confidence in list(strong_item.items())[:]:
-    print(f'{item}: {confidence}')
+# vertical_items = vertical_data_format_algorithm_data(70)
+# print('Vertical Items:')
+# for item, transaction_no in list(vertical_items.items())[:]:
+#     print(f'{item}: {transaction_no}')
+# frequent_items_final = vertical_data_format_algorithm_frequent_item_sets(vertical_items, 2)
+# print('Frequent Items:')
+# for item, transaction_no in list(frequent_items_final.items())[:]:
+#     print(f'{item}: {transaction_no}')
+# strong_item = vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_items_final, 30)
+# print('Strong Association Rules:')
+# for item, confidence in list(strong_item.items())[:]:
+#     print(f'{item}: {confidence}')
+
+
+def validate_confidence_input(P):
+    # Validate the input for confidence percentage
+    try:
+        value = float(P)
+        if 0 <= value <= 100:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+def show_vertical_data():
+    percentage = int(percentage_entry.get())
+    vertical_items = vertical_data_format_algorithm_data(percentage)
+    result_text.delete(1.0, tk.END)
+    for item, transaction_no in vertical_items.items():
+        result_text.insert(tk.END, f'{item}: {transaction_no}\n')
+
+def show_frequent_item_sets():
+    percentage = int(percentage_entry.get())
+    support = int(support_entry.get())
+    vertical_items = vertical_data_format_algorithm_data(percentage)
+    frequent_items = vertical_data_format_algorithm_frequent_item_sets(vertical_items, support)
+    result_text.delete(1.0, tk.END)
+    for item, transaction_no in frequent_items.items():
+        result_text.insert(tk.END, f'{item}: {transaction_no}\n')
+
+def show_strong_item_sets():
+    percentage = int(percentage_entry.get())
+    support = int(support_entry.get())
+    confidence = int(confidence_entry.get())
+    vertical_items = vertical_data_format_algorithm_data(percentage)
+    frequent_items = vertical_data_format_algorithm_frequent_item_sets(vertical_items, support)
+    strong_items = vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_items, confidence)
+    result_text.delete(1.0, tk.END)
+    for item, confidence in strong_items.items():
+        result_text.insert(tk.END, f'{item}: {confidence}\n')
+
+Windows = tk.Tk()
+Windows.title('Bakery')
+Windows.geometry('500x600')
+
+title_label_percent = ttk.Label(Windows, text='Percentage', font=('Arial', 20))
+title_label_percent.pack()
+validate_precentage = Windows.register(validate_confidence_input)
+percentage_entry = ttk.Entry(Windows, font=('Arial', 20), validate='key', validatecommand=(validate_precentage, '%P'))
+percentage_entry.pack()
+
+title_label_support = ttk.Label(Windows, text='Support', font=('Arial', 20))
+title_label_support.pack()
+support_entry = ttk.Entry(Windows, font=('Arial', 20))
+support_entry.pack()
+
+title_label_confidence = ttk.Label(Windows, text='Confidence', font=('Arial', 20))
+title_label_confidence.pack()
+confidence_entry = ttk.Entry(Windows, font=('Arial', 20))
+confidence_entry.pack()
+
+vertical_button = ttk.Button(Windows, text='Vertical Data', command=show_vertical_data)
+vertical_button.pack()
+
+frequent_item_sets_button = ttk.Button(Windows, text='Frequent Item Sets', command=show_frequent_item_sets)
+frequent_item_sets_button.pack()
+
+strong_item_sets_button = ttk.Button(Windows, text='Strong Item Sets', command=show_strong_item_sets)
+strong_item_sets_button.pack()
+
+result_text = tk.Text(Windows, wrap="word", height=20, width=60)
+result_text.pack()
+
+Windows.mainloop()
