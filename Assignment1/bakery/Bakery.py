@@ -2,6 +2,7 @@ import csv
 from itertools import combinations
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog
 
 def read_csv_file(file_path, percentage):
     data = []
@@ -173,6 +174,11 @@ def vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_ite
 # for item, confidence in list(strong_item.items())[:]:
 #     print(f'{item}: {confidence}')
 
+def browse_file():
+    file_path = filedialog.askopenfilename(filetypes=(("Excel files", "*.xls;*.xlsx"), ("Text files", "*.txt"), ("CSV files", "*.csv")))
+    if file_path:
+        file_entry.delete(0, tk.END)
+        file_entry.insert(0, file_path)
 
 def validate_confidence_input(P):
     # Validate the input for confidence percentage
@@ -214,36 +220,44 @@ def show_strong_item_sets():
 
 Windows = tk.Tk()
 Windows.title('Bakery')
-Windows.geometry('500x600')
+
+Windows.geometry('500x720')
+
 Windows.configure(bg='#CDCDFB')  
 
+browse_button = ttk.Button(Windows, text='Browse', command=browse_file, style='my.TButton')
+browse_button.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+
+file_entry = ttk.Entry(Windows, font=('Arial', 18))
+file_entry.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+
 title_label_percent = ttk.Label(Windows, text='Percentage', font=('Arial', 18), foreground='#1B0435')  # Set text color
-title_label_percent.grid(row=0, column=0, padx=10, pady=10)
+title_label_percent.grid(row=2, column=0, padx=10, pady=10)
 validate_precentage = Windows.register(validate_confidence_input)
 percentage_entry = ttk.Entry(Windows, font=('Arial', 18), validate='key', validatecommand=(validate_precentage, '%P'))
-percentage_entry.grid(row=0, column=1, padx=10, pady=10)
+percentage_entry.grid(row=2, column=1, padx=10, pady=10)
 
 title_label_support = ttk.Label(Windows, text='Support', font=('Arial', 18), foreground='#1B0435')  # Set text color
-title_label_support.grid(row=1, column=0, padx=10, pady=10)
+title_label_support.grid(row=3, column=0, padx=10, pady=10)
 support_entry = ttk.Entry(Windows, font=('Arial', 18))
-support_entry.grid(row=1, column=1, padx=10, pady=10)
+support_entry.grid(row=3, column=1, padx=10, pady=10)
 
 title_label_confidence = ttk.Label(Windows, text='Confidence', font=('Arial', 18), foreground='#1B0435')  # Set text color
-title_label_confidence.grid(row=2, column=0, padx=10, pady=10)
+title_label_confidence.grid(row=4, column=0, padx=10, pady=10)
 confidence_entry = ttk.Entry(Windows, font=('Arial', 18))
-confidence_entry.grid(row=2, column=1, padx=10, pady=10)
+confidence_entry.grid(row=4, column=1, padx=10, pady=10)
 
 vertical_button = ttk.Button(Windows, text='Vertical Data', command=show_vertical_data, style='my.TButton')
-vertical_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+vertical_button.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
 frequent_item_sets_button = ttk.Button(Windows, text='Frequent Item Sets', command=show_frequent_item_sets, style='my.TButton')
-frequent_item_sets_button.grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+frequent_item_sets_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
 strong_item_sets_button = ttk.Button(Windows, text='Strong Item Sets', command=show_strong_item_sets, style='my.TButton')
-strong_item_sets_button.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+strong_item_sets_button.grid(row=7, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
 result_text = tk.Text(Windows, wrap="word", height=18, width=60, foreground='#1B0435', background='#FFFFFF')  
-result_text.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
+result_text.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
 
 # style for buttons
 s = ttk.Style()
