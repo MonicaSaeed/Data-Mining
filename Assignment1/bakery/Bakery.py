@@ -4,6 +4,10 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
+file_path = ''
+verical_data = {}
+frequent_data = {}
+
 def read_csv_file(file_path, percentage):
     data = []
     with open(file_path, 'r') as file:
@@ -41,7 +45,11 @@ def vertical_format(transaction_items):
     return vertical_items
 
 def vertical_data_format_algorithm_data(percent):
-    file_path = 'bakery/Bakery.csv'
+    global file_path
+    if file_path == '':
+        print('Please select a file')
+        return
+    # file_path = 'bakery/Bakery.csv'
     csv_data = read_csv_file(file_path,percent)
     transaction_items = collect_items_by_transaction(csv_data)
     vertical_items = vertical_format(transaction_items)
@@ -110,6 +118,8 @@ def combinations_set(min_support_transaction_items):
                 comb[left_subset].append(right_subset)
             else:
                 comb[left_subset] = [right_subset]
+    # for left_subset, right_subset in list(comb.items())[:]:
+    #     print(f'{left_subset} => {right_subset}')
     return comb
 
 def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
@@ -141,9 +151,9 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
     left_right_cont = len(left_right_subset_transaction_no)
     
     confidence = left_right_cont / left_count
-    # print('confidence', confidence)
+    print('confidence', confidence)
     if confidence >= min_confidence:
-        # print(f'{left_subset} => {right_subset} : {confidence}')
+        print(f'{left_subset} => {right_subset} : {confidence}')
         strong_item_sets[f'{left_subset} => {right_subset}'] = confidence
     return strong_item_sets
 
@@ -151,14 +161,19 @@ def vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_ite
     combinations = combinations_set(frequent_items_final)
     # for left_subset, right_subset in list(combinations.items())[:]:
     #     print(f'{left_subset} => {right_subset}')
-    strong_item = {}
+    strong_items = []
     min_confidence = confidence / 100
     for i in combinations:
         left_subset = i
         for j in combinations[i]:
             right_subset = j
             strong_item = strong_item_sets(vertical_items, left_subset, right_subset, min_confidence)
-    return strong_item        
+            strong_items.append(strong_item)
+    # print strong_item
+    print("lastttttt: ")
+    for left_subset, right_subset in list(combinations.items())[:]:
+        print(f'{left_subset} => {right_subset}') 
+    return strong_items      
 
 
 # vertical_items = vertical_data_format_algorithm_data(70)
@@ -175,7 +190,7 @@ def vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_ite
 #     print(f'{item}: {confidence}')
 
 def browse_file():
-    file_path = filedialog.askopenfilename(filetypes=(("Excel files", "*.xls;*.xlsx"), ("Text files", "*.txt"), ("CSV files", "*.csv")))
+    file_path = filedialog.askopenfilename(filetypes=(("CSV files", "*.csv"), ("Excel files", "*.xls;*.xlsx"), ("Text files", "*.txt")))
     if file_path:
         file_entry.delete(0, tk.END)
         file_entry.insert(0, file_path)
@@ -193,30 +208,39 @@ def validate_confidence_input(P):
 
 def show_vertical_data():
     percentage = int(percentage_entry.get())
-    vertical_items = vertical_data_format_algorithm_data(percentage)
+    global file_entry, file_path, verical_data
+    file_entry = file_entry.get()
+    file_path = file_entry
+    verical_data = vertical_data_format_algorithm_data(percentage)
     result_text.delete(1.0, tk.END)
-    for item, transaction_no in vertical_items.items():
+    for item, transaction_no in verical_data.items():
         result_text.insert(tk.END, f'{item}: {transaction_no}\n')
 
 def show_frequent_item_sets():
-    percentage = int(percentage_entry.get())
     support = int(support_entry.get())
-    vertical_items = vertical_data_format_algorithm_data(percentage)
-    frequent_items = vertical_data_format_algorithm_frequent_item_sets(vertical_items, support)
+    global verical_data, frequent_data
+    if verical_data == {}:
+        print('Please get vertical data first')
+        return
+    frequent_data = vertical_data_format_algorithm_frequent_item_sets(verical_data, support)
     result_text.delete(1.0, tk.END)
-    for item, transaction_no in frequent_items.items():
+    for item, transaction_no in frequent_data.items():
         result_text.insert(tk.END, f'{item}: {transaction_no}\n')
 
 def show_strong_item_sets():
-    percentage = int(percentage_entry.get())
-    support = int(support_entry.get())
     confidence = int(confidence_entry.get())
-    vertical_items = vertical_data_format_algorithm_data(percentage)
-    frequent_items = vertical_data_format_algorithm_frequent_item_sets(vertical_items, support)
-    strong_items = vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_items, confidence)
+    global verical_data, frequent_data
+    if verical_data == {}:
+        print('Please get vertical data first')
+        return
+    strong_items = vertical_data_format_algorithm_strong_item_sets(verical_data,frequent_data, confidence)
+    print("show:")
+
     result_text.delete(1.0, tk.END)
-    for item, confidence in strong_items.items():
-        result_text.insert(tk.END, f'{item}: {confidence}\n')
+    for item in strong_items:
+        if item != {}:
+            for item, confidence in item.items():
+                result_text.insert(tk.END, f'{item}: {confidence}\n')
 
 Windows = tk.Tk()
 Windows.title('Bakery')
