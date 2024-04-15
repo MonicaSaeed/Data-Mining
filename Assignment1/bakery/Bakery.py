@@ -29,7 +29,6 @@ def collect_items_by_transaction(csv_data):
     for transaction_no, items in csv_data:
         if transaction_no in transaction_items:
             transaction_items[transaction_no].add(items)
-        # Use set to avoid duplicates
         else:
             transaction_items[transaction_no] = {items}  
     return transaction_items
@@ -151,9 +150,8 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
     left_right_cont = len(left_right_subset_transaction_no)
     
     confidence = left_right_cont / left_count
-    print('confidence', confidence)
     if confidence >= min_confidence:
-        print(f'{left_subset} => {right_subset} : {confidence}')
+        # print(f'{left_subset} => {right_subset} : {confidence}')
         strong_item_sets[f'{left_subset} => {right_subset}'] = confidence
     return strong_item_sets
 
@@ -169,10 +167,9 @@ def vertical_data_format_algorithm_strong_item_sets(vertical_items, frequent_ite
             right_subset = j
             strong_item = strong_item_sets(vertical_items, left_subset, right_subset, min_confidence)
             strong_items.append(strong_item)
-    # print strong_item
-    print("lastttttt: ")
-    for left_subset, right_subset in list(combinations.items())[:]:
-        print(f'{left_subset} => {right_subset}') 
+    # print("lastttttt: ")
+    # for left_subset, right_subset in list(combinations.items())[:]:
+    #     print(f'{left_subset} => {right_subset}') 
     return strong_items      
 
 
@@ -209,11 +206,13 @@ def validate_confidence_input(P):
 def show_vertical_data():
     percentage = int(percentage_entry.get())
     global file_entry, file_path, verical_data
-    file_entry = file_entry.get()
-    file_path = file_entry
+    if file_path == '':
+        file_entry = file_entry.get()
+        file_path = file_entry
     verical_data = vertical_data_format_algorithm_data(percentage)
     result_text.delete(1.0, tk.END)
     for item, transaction_no in verical_data.items():
+        # show item and transaction_no and lenght of transaction_no
         result_text.insert(tk.END, f'{item}: {transaction_no}\n')
 
 def show_frequent_item_sets():
@@ -234,8 +233,6 @@ def show_strong_item_sets():
         print('Please get vertical data first')
         return
     strong_items = vertical_data_format_algorithm_strong_item_sets(verical_data,frequent_data, confidence)
-    print("show:")
-
     result_text.delete(1.0, tk.END)
     for item in strong_items:
         if item != {}:
