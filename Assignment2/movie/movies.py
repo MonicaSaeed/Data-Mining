@@ -94,8 +94,6 @@ def k_means(data, centroids):
 
 
 
-
-# The rest of your code...
 def open_file_dialog():
     file_path = filedialog.askopenfilename(title="Select CSV file")
     if file_path:
@@ -116,30 +114,29 @@ def start_clustering():
         
         for i, cluster in enumerate(clusters):
             # Create a separate frame for each cluster
-            cluster_frame = tk.Frame(canvas)
-            canvas.create_window((0, i * 200), window=cluster_frame, anchor='nw')
+            cluster_frame = tk.Frame(frame)
+            cluster_frame.grid(row= 2 + (i // 2), column=i % 2, padx=10, pady=10)
             
             # Add a label for cluster centroid
             cluster_label = tk.Label(cluster_frame, text=f'Cluster {i + 1} Centroid: {centroids[i]}')
             cluster_label.pack()
             
             # Create a canvas for each cluster frame
-            inner_canvas = tk.Canvas(cluster_frame)
+            inner_canvas = tk.Canvas(cluster_frame, width=400, height=200)
             inner_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             
             # Add a scrollbar for each cluster canvas
             scrollbar = ttk.Scrollbar(cluster_frame, orient=tk.VERTICAL, command=inner_canvas.yview)
             scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
             inner_canvas.configure(yscrollcommand=scrollbar.set)
-            inner_canvas.bind('<Configure>', lambda e, canvas=inner_canvas: canvas.configure(scrollregion=canvas.bbox("all")))
             
             # Create a frame inside each cluster canvas to hold movie labels
-            frame = tk.Frame(inner_canvas)
-            inner_canvas.create_window((0,0), window=frame, anchor='nw')
+            frame_in_canvas = tk.Frame(inner_canvas)
+            inner_canvas.create_window((0,0), window=frame_in_canvas, anchor='nw')
             
             # Populate each frame with movie labels
             for j, movie in enumerate(cluster):
-                movie_label = tk.Label(frame, text=str(movie))
+                movie_label = tk.Label(frame_in_canvas, text=str(movie))
                 movie_label.pack()
         
     except Exception as e:
@@ -150,38 +147,32 @@ root = tk.Tk()
 root.title("K-means Clustering")
 root.geometry("800x750")
 
-# Create a canvas with scrollbar
-canvas = tk.Canvas(root)
-canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+# Create a frame to hold all clusters
+frame = tk.Frame(root)
+frame.pack()
 
-scrollbar = ttk.Scrollbar(root, orient=tk.VERTICAL, command=canvas.yview)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+# Create a label frame to group path, percentage, and clusters labels
+label_frame = tk.LabelFrame(frame, text="Input Data")
+label_frame.grid(row=0, column=0, padx=10, pady=10, columnspan=2, sticky='nsew')
 
-canvas.configure(yscrollcommand=scrollbar.set)
-canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+label_path = tk.Label(label_frame, text="CSV File Path:")
+label_path.grid(row=0, column=0, padx=5, pady=5)
+entry_path = tk.Entry(label_frame, width=50)
+entry_path.grid(row=0, column=1, padx=5, pady=5)
+btn_browse = tk.Button(label_frame, text="Browse", command=open_file_dialog)
+btn_browse.grid(row=0, column=2, padx=5, pady=5)
 
-# Create a frame inside the canvas to hold all clusters
-frame = tk.Frame(canvas)
-canvas.create_window((0,0), window=frame, anchor='nw')
+label_percentage = tk.Label(label_frame, text="Percentage of Data to Use:")
+label_percentage.grid(row=1, column=0, padx=5, pady=5)
+entry_percentage = tk.Entry(label_frame)
+entry_percentage.grid(row=1, column=1, padx=5, pady=5)
 
-label_path = tk.Label(frame, text="CSV File Path:")
-label_path.pack()
-entry_path = tk.Entry(frame, width=50)
-entry_path.pack()
-btn_browse = tk.Button(frame, text="Browse", command=open_file_dialog)
-btn_browse.pack()
-
-label_percentage = tk.Label(frame, text="Percentage of Data to Use:")
-label_percentage.pack()
-entry_percentage = tk.Entry(frame)
-entry_percentage.pack()
-
-label_clusters = tk.Label(frame, text="Number of Clusters:")
-label_clusters.pack()
-entry_clusters = tk.Entry(frame)
-entry_clusters.pack()
+label_clusters = tk.Label(label_frame, text="Number of Clusters:")
+label_clusters.grid(row=2, column=0, padx=5, pady=5)
+entry_clusters = tk.Entry(label_frame)
+entry_clusters.grid(row=2, column=1, padx=5, pady=5)
 
 btn_start = tk.Button(frame, text="Start Clustering", command=start_clustering)
-btn_start.pack()
+btn_start.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
 
 root.mainloop()
