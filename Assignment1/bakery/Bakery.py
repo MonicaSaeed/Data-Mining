@@ -60,7 +60,6 @@ def frequent_item_sets(vertical_items, min_support):
     for item, transaction_no in vertical_items.items():
         if len(transaction_no) >= min_support:
             frequent_items[item] = transaction_no
-    # merge frequent items to get new items and set transaction_no common to both items
     new_items = {}
     # merge 2 items and set transaction_no common to both items without repetition
     frequent_items_list = list(frequent_items.items())
@@ -124,7 +123,7 @@ def combinations_set(min_support_transaction_items):
 def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
     strong_item_sets = {}
     if len(left_subset) == 1:
-        left_subset = left_subset[0]
+        left_subset = next(iter(left_subset))
     else:
         left_subset = ','.join(left_subset)
     if len(right_subset) == 1:
