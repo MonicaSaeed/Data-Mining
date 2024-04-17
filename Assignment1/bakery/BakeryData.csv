@@ -11,3 +11,14 @@ TransactionNo,Items,DateTime,Daypart,DayType
 3,Jam,2016-10-30 10:07:57,Morning,Weekend
 3,Cookies,2016-10-30 10:07:57,Morning,Weekend
 3,Blaa,2016-10-30 10:07:57,Morning,Weekend
+
+
+
+min support = 2
+Jam,Cookies: {'3', '1'}
+Jam,Blaa: {'3', '2'}
+confidence = 50
+Jam => Cookies: 0.6666666666666666
+Jam => Blaa: 0.6666666666666666
+Cookies => Jam: 1.0
+Blaa => Jam: 1.0

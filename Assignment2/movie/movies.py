@@ -95,7 +95,7 @@ def k_means(data, centroids):
 
 
 def open_file_dialog():
-    file_path = filedialog.askopenfilename(title="Select CSV file")
+    file_path = filedialog.askopenfilename(filetypes=(("CSV files", "*.csv"), ("Excel files", "*.xls;*.xlsx"), ("Text files", "*.txt")))
     if file_path:
         entry_path.delete(0, tk.END)
         entry_path.insert(0, file_path)
@@ -157,7 +157,7 @@ def show_outliers():
         # Create a new Toplevel window for displaying outliers
         outliers_window = tk.Toplevel()
         outliers_window.title("Outliers")
-        outliers_window.geometry("700x700")  # Set the size of the window
+        outliers_window.geometry("700x600")  # Set the size of the window
         
         # Create a text widget for displaying outliers
         text_widget = tk.Text(outliers_window, wrap="word", width=80, height=20)
@@ -174,11 +174,21 @@ def show_outliers():
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
+def validate_confidence_input(P):
+    # Validate the input for confidence percentage
+    try:
+        value = float(P)
+        if 0 <= value <= 100:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
 
 # Create GUI
 root = tk.Tk()
 root.title("K-means Clustering")
-root.geometry("800x600")  # Adjust the initial size of the window
+root.geometry("1000x700")  # Adjust the initial size of the window
 
 # Create a canvas to hold all content
 canvas = tk.Canvas(root)
@@ -212,7 +222,8 @@ btn_browse.grid(row=0, column=2, padx=5, pady=5)
 
 label_percentage = tk.Label(label_frame, text="Percentage of Data to Use:")
 label_percentage.grid(row=1, column=0, padx=5, pady=5)
-entry_percentage = tk.Entry(label_frame)
+validate_precentage = label_frame.register(validate_confidence_input)
+entry_percentage = tk.Entry(label_frame, validate="key", validatecommand=(validate_precentage, "%P"))
 entry_percentage.grid(row=1, column=1, padx=5, pady=5)
 
 label_clusters = tk.Label(label_frame, text="Number of Clusters:")
