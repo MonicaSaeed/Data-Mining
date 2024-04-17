@@ -139,17 +139,65 @@ def start_clustering():
                 movie_label = tk.Label(frame_in_canvas, text=str(movie))
                 movie_label.pack()
         
+        # add scrollbar to the canvas
+        canvas = tk.Canvas(frame, width=800, height=200)
+        canvas.grid(row=2 + (k // 2), column=0, columnspan=2)
+        
     except Exception as e:
         messagebox.showerror("Error", str(e))
+
+def show_outliers():
+    try:
+        file_path = entry_path.get()
+        percentage = int(entry_percentage.get())
+        
+        data = read_data(file_path, percentage)
+        outliers = get_outlier(data)
+        
+        # Create a new Toplevel window for displaying outliers
+        outliers_window = tk.Toplevel()
+        outliers_window.title("Outliers")
+        outliers_window.geometry("700x700")  # Set the size of the window
+        
+        # Create a text widget for displaying outliers
+        text_widget = tk.Text(outliers_window, wrap="word", width=80, height=20)
+        text_widget.pack(fill="both", expand=True)
+        
+        # Add outliers data to the text widget
+        text_widget.insert("1.0", outliers.to_string(index=False))
+        
+        # Add scrollbar to the text widget
+        scrollbar = ttk.Scrollbar(text_widget, orient="vertical", command=text_widget.yview)
+        scrollbar.pack(side="right", fill="y")
+        text_widget.config(yscrollcommand=scrollbar.set)
+        
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
 
 # Create GUI
 root = tk.Tk()
 root.title("K-means Clustering")
-root.geometry("800x750")
+root.geometry("800x600")  # Adjust the initial size of the window
 
-# Create a frame to hold all clusters
-frame = tk.Frame(root)
-frame.pack()
+# Create a canvas to hold all content
+canvas = tk.Canvas(root)
+canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+# Add a scrollbar to the canvas
+scrollbar = ttk.Scrollbar(root, orient=tk.VERTICAL, command=canvas.yview)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+canvas.configure(yscrollcommand=scrollbar.set)
+
+# Create a frame inside the canvas to hold all clusters and labels
+frame = tk.Frame(canvas)
+canvas.create_window((0,0), window=frame, anchor='nw')
+
+# Function to update the canvas scrolling region
+def on_configure(event):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
+frame.bind("<Configure>", on_configure)
 
 # Create a label frame to group path, percentage, and clusters labels
 label_frame = tk.LabelFrame(frame, text="Input Data")
@@ -173,6 +221,14 @@ entry_clusters = tk.Entry(label_frame)
 entry_clusters.grid(row=2, column=1, padx=5, pady=5)
 
 btn_start = tk.Button(frame, text="Start Clustering", command=start_clustering)
-btn_start.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+btn_start.grid(row=1, column=0, padx=10, pady=10)
+
+# Add the "Show Outliers" button
+btn_outliers = tk.Button(frame, text="Show Outliers", command=show_outliers)
+btn_outliers.grid(row=1, column=1, padx=10, pady=10)
+
+# Update the scroll region of the canvas
+frame.update_idletasks()
+canvas.config(scrollregion=canvas.bbox("all"))
 
 root.mainloop()
