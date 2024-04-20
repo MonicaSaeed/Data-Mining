@@ -136,7 +136,7 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
         if item in left_subset:
             left_subset_transaction_no[item] = transaction_no
     # print('left_subset_transaction_no', left_subset_transaction_no)
-    left_subset_transaction_no = set.intersection(*left_subset_transaction_no.values())
+    left_subset_transaction_no = set.intersection(*[set(s) for s in list(left_subset_transaction_no.values())])
     # print('common_left_subset_transaction_no', left_subset_transaction_no)
     left_count = len(left_subset_transaction_no)
 
@@ -145,7 +145,7 @@ def strong_item_sets(vertical_items, left_subset, right_subset, min_confidence):
         if item in right_subset:
             right_subset_transaction_no[item] = transaction_no
     # Merge the transaction numbers from both subsets
-    left_right_subset_transaction_no = set.intersection(*[set(txns) for txns in [left_subset_transaction_no] + list(right_subset_transaction_no.values())])
+    left_right_subset_transaction_no = set.intersection(*[set(s) for s in [left_subset_transaction_no] + list(right_subset_transaction_no.values())])
     left_right_cont = len(left_right_subset_transaction_no)
     
     confidence = left_right_cont / left_count
