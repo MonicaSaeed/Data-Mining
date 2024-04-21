@@ -57,8 +57,8 @@ def update_centroids(clusters):
         ratings = [movie.rating for movie in cluster]
         if ratings:
             centroids.append(sum(ratings) / len(ratings))
-        # else:
-        #     centroids.append(0)  # handle empty clusters
+        else:
+            centroids.append(0)  # handle empty clusters
     return centroids
 
 def k_means(data, centroids):
