@@ -125,7 +125,7 @@ def start_clustering():
             cluster_frame = tk.Frame(frame)
             cluster_frame.grid(row=row_index, column=column_index, padx=10, pady=10)
             
-            cluster_label = tk.Label(cluster_frame, text=f'Cluster {i + 1} Centroid: {centroids[i]}')
+            cluster_label = tk.Label(cluster_frame, text=f'Cluster {i + 1} Centroid: {centroids[i]} number of movies: {len(cluster)}')
             cluster_label.pack()
             
             inner_canvas = tk.Canvas(cluster_frame, width=400, height=200)
@@ -159,6 +159,9 @@ def show_outliers():
         outliers_window = tk.Toplevel()
         outliers_window.title("Outliers")
         outliers_window.geometry("700x600")  
+        
+        label = tk.Label(outliers_window, text=f"Number of Outliers: {len(outliers)}")
+        label.pack()
         
         text_widget = tk.Text(outliers_window, wrap="word", width=80, height=20)
         text_widget.pack(fill="both", expand=True)
