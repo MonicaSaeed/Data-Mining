@@ -1,8 +1,4 @@
 import numpy as np
-import pandas as pd
-from sklearn.calibration import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
 
 class Node:
     def __init__(self, feature_index=None, threshold=None, left=None, right=None, value=None):
@@ -75,68 +71,3 @@ class DecisionTree:
         return np.sum(y_true == y_pred) / len(y_true)
 
 
-# Example usage
-# Load the data
-data = pd.read_csv('diabetes_prediction_dataset.csv')
-
-# Find and handle missing values
-# print(data.isna().sum())
-data = data.dropna()
-
-# Preprocessing steps...
-X = data.drop(columns=['diabetes'])
-y = data['diabetes']
-
-# Convert categorical features to numerical using LabelEncoder
-categorical_features = X.select_dtypes(include=[np.object_]).columns.to_list()
-categorical_encoders = {}
-for feature in categorical_features:
-    categorical_encoders[feature] = LabelEncoder()
-    X[feature] = categorical_encoders[feature].fit_transform(X[feature])
-
-# Normalize numerical columns
-scaler = MinMaxScaler()
-numerical_columns = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
-X[numerical_columns] = scaler.fit_transform(X[numerical_columns])
-# # drop numerical_columns
-# X = X.drop(columns=numerical_columns)
-
-
-# Splitting the data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
-
-# Training the Decision Tree
-model = DecisionTree(max_depth=5)
-model.fit(X_train.values, y_train.values)  # Ensure you pass values instead of DataFrame
-
-# Making predictions
-y_pred = model.predict(X_test.values)  # Ensure you pass values instead of DataFrame
-
-# print predictions and print actual values and predictions
-for i in range(5):
-    print(f"Data record {i + 1}: {X_test.iloc[i].values} - Actual: {y_test.iloc[i]} - Predicted: {y_pred[i]}")
-
-# Calculating accuracy
-accuracy = model.accuracy(y_test.values, y_pred)  # Ensure you pass values instead of DataFrame
-print("Accuracy:", accuracy)
-
-# Predicting a single instance
-g="Female"
-a=79.0
-h=0
-hd=0
-sh="No Info"
-bmi=23.86
-hba1c=5.7
-bg=85
-# categorical encoding
-g = categorical_encoders["gender"].transform([g])[0]
-sh = categorical_encoders["smoking_history"].transform([sh])[0]
-# Normalize numerical input values
-sc = scaler.transform([[a, bmi, hba1c, bg]])
-a, bmi, hba1c, bg = sc[0]
-
-p = [[g, a, h, hd, sh, bmi, hba1c, bg]]
-# Make the prediction
-prediction = model.predict(p)
-print("Prediction:", prediction[0])
