@@ -41,14 +41,14 @@ def read(file_path, percentage):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
     return X_train, X_test, y_train, y_test, categorical_encoders, scaler
 
-def train(X_train, y_train):
+def traindt(X_train, y_train):
     # Training the Decision Tree
-    model = DecisionTree(max_depth=5)
+    model = DecisionTree(max_depth=8)
     model.fit(X_train.values, y_train.values)  # Ensure you pass values instead of DataFrame
     return model
 
 
-def test(model, X_test, y_test):
+def testdt(model, X_test, y_test):
     # Making predictions
     y_pred = model.predict(X_test.values)  # Ensure you pass values instead of DataFrame
 
@@ -79,8 +79,8 @@ def predict_row(model, categorical_encoders, scaler,row):
 file_path = 'diabetes_prediction_dataset.csv'
 percentage = 100
 X_train, X_test, y_train, y_test, categorical_encoders, scaler = read(file_path, percentage)
-model = train(X_train, y_train)
-y_pred, accuracy = test(model, X_test, y_test)
+model = traindt(X_train, y_train)
+y_pred, accuracy = testdt(model, X_test, y_test)
 for i in range(5):
     print(f"Data record {i + 1}: {X_test.iloc[i].values} - Actual: {y_test.iloc[i]} - Predicted: {y_pred[i]}")
 print("Accuracy:", accuracy)
