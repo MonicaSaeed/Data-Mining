@@ -2,13 +2,10 @@ import numpy as np
 import pandas as pd
 from sklearn.calibration import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
 
 from dt import DecisionTree
-import warnings
-warnings.filterwarnings("ignore", message="X does not have valid feature names, but MinMaxScaler was fitted with feature names")
 
-def read(file_path, percentage):
+def read_data(file_path, percentage):
     # Load the data
     num_rows = sum(1 for line in open(file_path)) 
     num_read_rows = int(num_rows * percentage / 100)
@@ -29,17 +26,27 @@ def read(file_path, percentage):
         categorical_encoders[feature] = LabelEncoder()
         X[feature] = categorical_encoders[feature].fit_transform(X[feature])
 
-    # Normalize numerical columns
-    scaler = MinMaxScaler()
-    numerical_columns = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
-    X[numerical_columns] = scaler.fit_transform(X[numerical_columns])
-    # # drop numerical_columns
-    # X = X.drop(columns=numerical_columns)
+    print("Categorical Encoders: ")
+    # print categorical_encoders map
+    for feature in categorical_features:
+        label_encoder = categorical_encoders[feature]
+        mapping = dict(zip(label_encoder.classes_, label_encoder.transform(label_encoder.classes_)))
+        print(f'{feature}: {mapping}')
 
+    # Discretize numerical columns into intervals
+    numerical_columns = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
+    interval_encoders = {}
+    for feature in numerical_columns:
+        X[feature], interval_encoders[feature] = pd.cut(X[feature], bins=5, labels=False, retbins=True)
+
+    print("\nInterval Encoders: ")
+    # print interval_encoders map
+    for feature in numerical_columns:
+        print(f'{feature}: {interval_encoders[feature]}')
 
     # Splitting the data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
-    return X_train, X_test, y_train, y_test, categorical_encoders, scaler
+    return X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders
 
 def traindt(X_train, y_train):
     # Training the Decision Tree
@@ -61,27 +68,31 @@ def testdt(model, X_test, y_test):
     # print("Accuracy:", accuracy)
     return y_pred, accuracy
 
-def predict_row(model, categorical_encoders, scaler,row):
+def predict_row(model, categorical_encoders, interval_encoders, row):
     # Encode categorical features
     g_encoded = categorical_encoders["gender"].transform([row[0]])[0]
     sh_encoded = categorical_encoders["smoking_history"].transform([row[4]])[0]
-    # Normalize numerical input values
-    sc = scaler.transform([[row[1], row[5], row[6], row[7]]])
-    a, bmi, hba1c, bg = sc[0]
+    
+    # Discretize numerical input values using the stored intervals
+    a_bin = interval_encoders['age'].searchsorted(row[1]) - 1
+    bmi_bin = interval_encoders['bmi'].searchsorted(row[5]) - 1
+    hba1c_bin = interval_encoders['HbA1c_level'].searchsorted(row[6]) - 1
+    bg_bin = interval_encoders['blood_glucose_level'].searchsorted(row[7]) - 1
 
     # Make the prediction
-    prediction = model.predict([[g_encoded, a, row[2], row[3], sh_encoded, bmi, hba1c, bg]])
-    # print("Prediction:", prediction[0])
+    prediction = model.predict([[g_encoded, a_bin, row[2], row[3], sh_encoded, bmi_bin, hba1c_bin, bg_bin]])
     return prediction[0]
 
 
 
 file_path = 'diabetes_prediction_dataset.csv'
-percentage = 100
-X_train, X_test, y_train, y_test, categorical_encoders, scaler = read(file_path, percentage)
+percentage = 3
+X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
 model = traindt(X_train, y_train)
 y_pred, accuracy = testdt(model, X_test, y_test)
-for i in range(5):
+# y_pred length 
+l=len(y_pred)
+for i in range(l):
     print(f"Data record {i + 1}: {X_test.iloc[i].values} - Actual: {y_test.iloc[i]} - Predicted: {y_pred[i]}")
 print("Accuracy:", accuracy)
 # Female,79.0,0,0,No Info,23.86,5.7,85,0
@@ -95,6 +106,6 @@ sh = "No Info"
 bmi = 23.86
 hba1c = 5.7
 bg = 85
-row=[g,a,h,hd,sh,bmi,hba1c,bg]
-prediction = predict_row(model, categorical_encoders, scaler,row)
+row = [g, a, h, hd, sh, bmi, hba1c, bg]
+prediction = predict_row(model, categorical_encoders, interval_encoders, row)
 print(prediction)
