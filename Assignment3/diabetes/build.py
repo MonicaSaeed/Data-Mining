@@ -17,7 +17,6 @@ data.fillna(method='ffill', inplace=True)  # Forward fill missing values
 
 # Separate numerical and categorical columns
 numerical_columns = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
-categorical_columns = ['gender', 'hypertension', 'heart_disease', 'smoking_history']
 
 # Normalize numerical columns
 scaler = MinMaxScaler()
@@ -41,3 +40,26 @@ for i in range(5):
 # Calculating accuracy
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
+# Female,79.0,0,0,No Info,23.86,5.7,85,0
+
+# g="Female"
+g=1
+a=79.0
+h=0
+hd=0
+# sh="No Info"
+sh=None
+bmi=23.86
+hba1c=5.7
+bg=85
+# Normalize numerical input values
+sc = scaler.transform([[a, bmi, hba1c, bg]])
+a, bmi, hba1c, bg = sc[0]
+
+# Create the input array for prediction
+p = [[g, a, h, hd, sh, bmi, hba1c, bg]]
+
+# Make the prediction
+prediction = model.predict(p)
+
+print("Prediction:", prediction[0])
