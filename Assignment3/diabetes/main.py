@@ -100,10 +100,12 @@ def testnb(model, X_test, y_test):
     accuracy = model.accuracy(y_test.values, y_pred)  # Ensure you pass values instead of DataFrame
     return y_pred, accuracy
 
-def predict_rownb(model, categorical_encoders, row):
-    g_encoded = categorical_encoders
-    sh_encoded = categorical_encoders
-
+def predict_rownb(model, categorical_encoders, interval_encoders, row):
+    # Encode categorical features
+    g_encoded = categorical_encoders["gender"].transform([row[0]])[0]
+    sh_encoded = categorical_encoders["smoking_history"].transform([row[4]])[0]
+    
+    # Discretize numerical input values using the stored intervals
     a_bin = interval_encoders['age'].searchsorted(row[1]) - 1
     bmi_bin = interval_encoders['bmi'].searchsorted(row[5]) - 1
     hba1c_bin = interval_encoders['HbA1c_level'].searchsorted(row[6]) - 1
