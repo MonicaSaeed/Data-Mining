@@ -4,6 +4,7 @@ from sklearn.calibration import LabelEncoder
 from sklearn.model_selection import train_test_split
 
 from dt import DecisionTree
+from nb import NaiveBayes
 
 def read_data(file_path, percentage):
     # Load the data
@@ -89,19 +90,68 @@ def applydt(X_train, y_train, X_test, y_test):
     y_pred, accuracy = testdt(model, X_test, y_test)
     return  model, y_pred, accuracy
 
+def trainnb(X_train, y_train):
+    model = NaiveBayes()
+    model.fit(X_train.values, y_train.values)  # Ensure you pass values instead of DataFrame
+    return model
+
+def testnb(model, X_test, y_test):
+    y_pred = model.predict(X_test.values)  # Ensure you pass values instead of DataFrame
+    accuracy = model.accuracy(y_test.values, y_pred)  # Ensure you pass values instead of DataFrame
+    return y_pred, accuracy
+
+def predict_rownb(model, categorical_encoders, row):
+    g_encoded = categorical_encoders
+    sh_encoded = categorical_encoders
+
+    a_bin = interval_encoders['age'].searchsorted(row[1]) - 1
+    bmi_bin = interval_encoders['bmi'].searchsorted(row[5]) - 1
+    hba1c_bin = interval_encoders['HbA1c_level'].searchsorted(row[6]) - 1
+    bg_bin = interval_encoders['blood_glucose_level'].searchsorted(row[7]) - 1
+
+    prediction = model.predict([[g_encoded, a_bin, row[2], row[3], sh_encoded, bmi_bin, hba1c_bin, bg_bin]])
+    return prediction[0]
+
+def applynb(X_train, y_train, X_test, y_test):
+    model = trainnb(X_train, y_train)
+    y_pred, accuracy = testnb(model, X_test, y_test)
+    return model, y_pred, accuracy
 
 file_path = 'diabetes_prediction_dataset.csv'
-percentage = 3
+percentage = 1
 X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
 
-model, y_pred, accuracy = applydt(X_train, y_train, X_test, y_test)
-# y_pred length 
-l=len(y_pred)
+# model, y_pred, accuracy = applydt(X_train, y_train, X_test, y_test)
+# # y_pred length 
+# l=len(y_pred)
+# print("Data record: ",)
+# for i in range(l):
+#     print(f"Data record {i + 1}: {X_test.iloc[i].values} - Actual: {y_test.iloc[i]} - Predicted: {y_pred[i]}")
+# print("Accuracy:", accuracy)
+# # Female,79.0,0,0,No Info,23.86,5.7,85,0
+
+# # Predicting a single instance
+# g = "Female"
+# a = 79.0
+# h = 0
+# hd = 0
+# sh = "No Info"
+# bmi = 23.86
+# hba1c = 5.7
+# bg = 85
+# row = [g, a, h, hd, sh, bmi, hba1c, bg]
+# prediction = predict_rowdt(model, categorical_encoders, interval_encoders, row)
+# print("prediction: ",prediction)
+
+model, y_pred, accuracy = applynb(X_train, y_train, X_test, y_test)
+# y_pred length
+l = len(y_pred)
 print("Data record: ",)
 for i in range(l):
     print(f"Data record {i + 1}: {X_test.iloc[i].values} - Actual: {y_test.iloc[i]} - Predicted: {y_pred[i]}")
 print("Accuracy:", accuracy)
-# Female,79.0,0,0,No Info,23.86,5.7,85,0
+
+# model.print_model()
 
 # Predicting a single instance
 g = "Female"
