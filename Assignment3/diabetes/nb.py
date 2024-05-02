@@ -38,7 +38,7 @@ class NaiveBayes:
                             if k == value:
                                 self.model[i][j][k] = 1/total
                             else:
-                                self.model[i][j].setdefault(k, len(np.intersect1d(indices, value_indices)) / total)
+                                self.model[i][j].setdefault(k, (len(np.intersect1d(indices, value_indices)) + 1) / total)
                         continue
                     self.model[i][j][value] = prob
 
