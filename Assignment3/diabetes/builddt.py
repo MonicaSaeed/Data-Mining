@@ -18,10 +18,6 @@ data.fillna(method='ffill', inplace=True)  # Forward fill missing values
 # Separate numerical and categorical columns
 numerical_columns = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
 
-# Normalize numerical columns
-scaler = MinMaxScaler()
-data[numerical_columns] = scaler.fit_transform(data[numerical_columns])
-
 # Splitting the data
 X = data.drop(columns=['diabetes'])
 y = data['diabetes']
@@ -52,9 +48,7 @@ sh=None
 bmi=23.86
 hba1c=5.7
 bg=85
-# Normalize numerical input values
-sc = scaler.transform([[a, bmi, hba1c, bg]])
-a, bmi, hba1c, bg = sc[0]
+
 
 # Create the input array for prediction
 p = [[g, a, h, hd, sh, bmi, hba1c, bg]]
