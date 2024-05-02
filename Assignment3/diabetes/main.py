@@ -84,17 +84,17 @@ def predict_rowdt(model, categorical_encoders, interval_encoders, row):
     prediction = model.predict([[g_encoded, a_bin, row[2], row[3], sh_encoded, bmi_bin, hba1c_bin, bg_bin]])
     return prediction[0]
 
-def applydt(file_path, percentage):
+def applydt(X_train, y_train, X_test, y_test):
     model = traindt(X_train, y_train)
     y_pred, accuracy = testdt(model, X_test, y_test)
-    return X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders, model, y_pred, accuracy
+    return  model, y_pred, accuracy
 
 
 file_path = 'diabetes_prediction_dataset.csv'
 percentage = 3
 X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
 
-X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders, model, y_pred, accuracy = applydt(file_path, percentage)
+model, y_pred, accuracy = applydt(X_train, y_train, X_test, y_test)
 # y_pred length 
 l=len(y_pred)
 print("Data record: ",)
