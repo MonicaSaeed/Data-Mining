@@ -118,7 +118,7 @@ def applynb(X_train, y_train, X_test, y_test):
     return model, y_pred, accuracy
 
 file_path = 'diabetes_prediction_dataset.csv'
-percentage = 1
+percentage = 50
 X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
 
 # model, y_pred, accuracy = applydt(X_train, y_train, X_test, y_test)

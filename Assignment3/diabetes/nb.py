@@ -31,6 +31,15 @@ class NaiveBayes:
                     value_indices = np.where(X[:, j] == value)[0]
                     # calculate the probability of the current value given the current class
                     prob = len(np.intersect1d(indices, value_indices)) / len(indices)
+                    # Handle zero probability
+                    if prob == 0:
+                        total = len(indices)+len(unique_values)
+                        for k in unique_values:
+                            if k == value:
+                                self.model[i][j][k] = 1/total
+                            else:
+                                self.model[i][j].setdefault(k, len(np.intersect1d(indices, value_indices)) / total)
+                        continue
                     self.model[i][j][value] = prob
 
     # Predict the target class for the input data
