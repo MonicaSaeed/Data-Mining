@@ -42,7 +42,9 @@ def read_data(file_path, percentage):
     print("\nInterval Encoders: ")
     # print interval_encoders map
     for feature in numerical_columns:
-        print(f'{feature}: {interval_encoders[feature]}')
+        label_encoder = interval_encoders[feature]
+        mapping = dict(zip(label_encoder, range(len(label_encoder))))
+        print(f'{feature}: {mapping}')
 
     # Splitting the data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
@@ -83,15 +85,19 @@ def predict_row(model, categorical_encoders, interval_encoders, row):
     prediction = model.predict([[g_encoded, a_bin, row[2], row[3], sh_encoded, bmi_bin, hba1c_bin, bg_bin]])
     return prediction[0]
 
+def applydt(file_path, percentage):
+    X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
+    model = traindt(X_train, y_train)
+    y_pred, accuracy = testdt(model, X_test, y_test)
+    return X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders, model, y_pred, accuracy
 
 
 file_path = 'diabetes_prediction_dataset.csv'
 percentage = 3
-X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
-model = traindt(X_train, y_train)
-y_pred, accuracy = testdt(model, X_test, y_test)
+X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders, model, y_pred, accuracy = applydt(file_path, percentage)
 # y_pred length 
 l=len(y_pred)
+print("Data record: ",)
 for i in range(l):
     print(f"Data record {i + 1}: {X_test.iloc[i].values} - Actual: {y_test.iloc[i]} - Predicted: {y_pred[i]}")
 print("Accuracy:", accuracy)
@@ -108,4 +114,4 @@ hba1c = 5.7
 bg = 85
 row = [g, a, h, hd, sh, bmi, hba1c, bg]
 prediction = predict_row(model, categorical_encoders, interval_encoders, row)
-print(prediction)
+print("prediction: ",prediction)
