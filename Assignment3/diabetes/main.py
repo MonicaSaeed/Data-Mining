@@ -56,7 +56,6 @@ def traindt(X_train, y_train):
     model.fit(X_train.values, y_train.values)  # Ensure you pass values instead of DataFrame
     return model
 
-
 def testdt(model, X_test, y_test):
     # Making predictions
     y_pred = model.predict(X_test.values)  # Ensure you pass values instead of DataFrame
@@ -70,7 +69,7 @@ def testdt(model, X_test, y_test):
     # print("Accuracy:", accuracy)
     return y_pred, accuracy
 
-def predict_row(model, categorical_encoders, interval_encoders, row):
+def predict_rowdt(model, categorical_encoders, interval_encoders, row):
     # Encode categorical features
     g_encoded = categorical_encoders["gender"].transform([row[0]])[0]
     sh_encoded = categorical_encoders["smoking_history"].transform([row[4]])[0]
@@ -86,7 +85,6 @@ def predict_row(model, categorical_encoders, interval_encoders, row):
     return prediction[0]
 
 def applydt(file_path, percentage):
-    X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
     model = traindt(X_train, y_train)
     y_pred, accuracy = testdt(model, X_test, y_test)
     return X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders, model, y_pred, accuracy
@@ -94,6 +92,8 @@ def applydt(file_path, percentage):
 
 file_path = 'diabetes_prediction_dataset.csv'
 percentage = 3
+X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
+
 X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders, model, y_pred, accuracy = applydt(file_path, percentage)
 # y_pred length 
 l=len(y_pred)
@@ -113,5 +113,5 @@ bmi = 23.86
 hba1c = 5.7
 bg = 85
 row = [g, a, h, hd, sh, bmi, hba1c, bg]
-prediction = predict_row(model, categorical_encoders, interval_encoders, row)
+prediction = predict_rowdt(model, categorical_encoders, interval_encoders, row)
 print("prediction: ",prediction)
