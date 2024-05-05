@@ -40,25 +40,31 @@ class App:
         self.entry_percentage = tk.Entry(self.frame)
         self.entry_percentage.grid(row=1, column=1, padx=10, pady=10)
 
+        self.label_test_size = tk.Label(self.frame, text="Test Size:")
+        self.label_test_size.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+
+        self.entry_test_size = tk.Entry(self.frame)
+        self.entry_test_size.grid(row=2, column=1, padx=10, pady=10)
+
         # Buttons
         self.button_browse = tk.Button(self.frame, text="Browse", command=self.browse_file)
         self.button_browse.grid(row=0, column=2, padx=10, pady=10)
 
         self.button_process = tk.Button(self.frame, text="Process Data", command=self.process_data)
-        self.button_process.grid(row=2, column=1, padx=10, pady=10)
+        self.button_process.grid(row=3, column=1, padx=10, pady=10)
 
         self.button_predict_dt = tk.Button(self.frame, text="Predict DT", command=self.predict_dt)
-        self.button_predict_dt.grid(row=2, column=0, padx=10, pady=10)
+        self.button_predict_dt.grid(row=3, column=0, padx=10, pady=10)
 
         self.button_predict_nb = tk.Button(self.frame, text="Predict NB", command=self.predict_nb)
-        self.button_predict_nb.grid(row=2, column=2, padx=10, pady=10)
+        self.button_predict_nb.grid(row=3, column=2, padx=10, pady=10)
 
         # Text Widgets for displaying results
         self.result_text_dt = scrolledtext.ScrolledText(self.frame, wrap=tk.WORD, width=50, height=30)
-        self.result_text_dt.grid(row=3, column=0, padx=10, pady=10)
+        self.result_text_dt.grid(row=4, column=0, padx=10, pady=10)
 
         self.result_text_nb = scrolledtext.ScrolledText(self.frame, wrap=tk.WORD, width=50, height=30)
-        self.result_text_nb.grid(row=3, column=1, padx=10, pady=10)
+        self.result_text_nb.grid(row=4, column=1, padx=10, pady=10)
 
         # Input fields for prediction
         self.gender_var = tk.StringVar()
@@ -71,51 +77,51 @@ class App:
         self.blood_glucose_level_var = tk.StringVar()
 
         self.label_gender = tk.Label(self.frame, text="Gender:")
-        self.label_gender.grid(row=4, column=0, padx=10, pady=5)
+        self.label_gender.grid(row=5, column=0, padx=10, pady=5)
         self.entry_gender = tk.Entry(self.frame, textvariable=self.gender_var)
-        self.entry_gender.grid(row=4, column=1, padx=10, pady=5)
+        self.entry_gender.grid(row=5, column=1, padx=10, pady=5)
 
         self.label_age = tk.Label(self.frame, text="Age:")
-        self.label_age.grid(row=5, column=0, padx=10, pady=5)
+        self.label_age.grid(row=6, column=0, padx=10, pady=5)
         self.entry_age = tk.Entry(self.frame, textvariable=self.age_var)
-        self.entry_age.grid(row=5, column=1, padx=10, pady=5)
+        self.entry_age.grid(row=6, column=1, padx=10, pady=5)
 
         self.label_hypertension = tk.Label(self.frame, text="Hypertension:")
-        self.label_hypertension.grid(row=6, column=0, padx=10, pady=5)
+        self.label_hypertension.grid(row=7, column=0, padx=10, pady=5)
         self.entry_hypertension = tk.Entry(self.frame, textvariable=self.hypertension_var)
-        self.entry_hypertension.grid(row=6, column=1, padx=10, pady=5)
+        self.entry_hypertension.grid(row=7, column=1, padx=10, pady=5)
 
         self.label_heart_disease = tk.Label(self.frame, text="Heart Disease:")
-        self.label_heart_disease.grid(row=7, column=0, padx=10, pady=5)
+        self.label_heart_disease.grid(row=8, column=0, padx=10, pady=5)
         self.entry_heart_disease = tk.Entry(self.frame, textvariable=self.heart_disease_var)
-        self.entry_heart_disease.grid(row=7, column=1, padx=10, pady=5)
+        self.entry_heart_disease.grid(row=8, column=1, padx=10, pady=5)
 
         self.label_smoking_history = tk.Label(self.frame, text="Smoking History:")
-        self.label_smoking_history.grid(row=8, column=0, padx=10, pady=5)
+        self.label_smoking_history.grid(row=9, column=0, padx=10, pady=5)
         self.entry_smoking_history = tk.Entry(self.frame, textvariable=self.smoking_history_var)
-        self.entry_smoking_history.grid(row=8, column=1, padx=10, pady=5)
+        self.entry_smoking_history.grid(row=9, column=1, padx=10, pady=5)
 
         self.label_bmi = tk.Label(self.frame, text="BMI:")
-        self.label_bmi.grid(row=9, column=0, padx=10, pady=5)
+        self.label_bmi.grid(row=10, column=0, padx=10, pady=5)
         self.entry_bmi = tk.Entry(self.frame, textvariable=self.bmi_var)
-        self.entry_bmi.grid(row=9, column=1, padx=10, pady=5)
+        self.entry_bmi.grid(row=10, column=1, padx=10, pady=5)
 
         self.label_hba1c_level = tk.Label(self.frame, text="HbA1c Level:")
-        self.label_hba1c_level.grid(row=10, column=0, padx=10, pady=5)
+        self.label_hba1c_level.grid(row=11, column=0, padx=10, pady=5)
         self.entry_hba1c_level = tk.Entry(self.frame, textvariable=self.hba1c_level_var)
-        self.entry_hba1c_level.grid(row=10, column=1, padx=10, pady=5)
+        self.entry_hba1c_level.grid(row=11, column=1, padx=10, pady=5)
 
         self.label_blood_glucose_level = tk.Label(self.frame, text="Blood Glucose Level:")
-        self.label_blood_glucose_level.grid(row=11, column=0, padx=10, pady=5)
+        self.label_blood_glucose_level.grid(row=12, column=0, padx=10, pady=5)
         self.entry_blood_glucose_level = tk.Entry(self.frame, textvariable=self.blood_glucose_level_var)
-        self.entry_blood_glucose_level.grid(row=11, column=1, padx=10, pady=5)
+        self.entry_blood_glucose_level.grid(row=12, column=1, padx=10, pady=5)
 
         # Prediction labels
         self.prediction_label_dt = tk.Label(self.frame, text="")
-        self.prediction_label_dt.grid(row=12, column=0, columnspan=2, padx=10, pady=5)
+        self.prediction_label_dt.grid(row=13, column=0, columnspan=2, padx=10, pady=5)
 
         self.prediction_label_nb = tk.Label(self.frame, text="")
-        self.prediction_label_nb.grid(row=12, column=0, columnspan=2, padx=10, pady=5)
+        self.prediction_label_nb.grid(row=13, column=0, columnspan=2, padx=10, pady=5)
 
     def browse_file(self):
         file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("Excel files", "*.xlsx")])
@@ -125,13 +131,14 @@ class App:
     def process_data(self):
         file_path = self.entry_file.get()
         percentage = int(self.entry_percentage.get())
+        test_size = float(self.entry_test_size.get())
         
         if not file_path:
             messagebox.showerror("Error", "Please select a file.")
             return
 
         try:
-            X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
+            X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage, test_size)
             self.apply_decision_tree(X_train, y_train, X_test, y_test)
             self.apply_naive_bayes(X_train, y_train, X_test, y_test)
         except Exception as e:
@@ -161,7 +168,8 @@ class App:
             ]
             file_path = self.entry_file.get()
             percentage = int(self.entry_percentage.get())
-            X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
+            test_size = float(self.entry_test_size.get())
+            X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage, test_size)
             model = traindt(X_train, y_train)
             prediction = predict_rowdt(model, categorical_encoders, interval_encoders, row)
 
@@ -184,7 +192,8 @@ class App:
             ]
             file_path = self.entry_file.get()
             percentage = int(self.entry_percentage.get())
-            X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage)
+            test_size = float(self.entry_test_size.get())
+            X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders = read_data(file_path, percentage, test_size)
             model = trainnb(X_train, y_train)
             prediction = predict_rownb(model, categorical_encoders, interval_encoders, row)
 
@@ -200,7 +209,7 @@ class App:
         for i in range(l):
             result_text.insert(tk.END, f"Data record {i + 1}: {X_test.iloc[i].values} - Actual: {y_test.iloc[i]} - Predicted: {y_pred[i]}\n")
 
-def read_data(file_path, percentage):
+def read_data(file_path, percentage, test_size):
     num_rows = sum(1 for line in open(file_path)) 
     num_read_rows = int(num_rows * percentage / 100)
     data = pd.read_csv(file_path, nrows=num_read_rows)
@@ -223,7 +232,7 @@ def read_data(file_path, percentage):
         X[feature], interval_encoders[feature] = pd.cut(X[feature], bins=5, labels=False, retbins=True)
 
     # Splitting the data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
     return X_train, X_test, y_train, y_test, categorical_encoders, interval_encoders
 
 def traindt(X_train, y_train):
