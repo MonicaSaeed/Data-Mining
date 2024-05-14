@@ -2,10 +2,10 @@ import numpy as np
 
 class Node:
     def __init__(self, feature_index=None, threshold=None, left=None, right=None, value=None):
-        self.feature_index = feature_index  # Index of feature to split on
-        self.threshold = threshold  # Threshold value for the feature
-        self.left = left  # Left child (subtree)
-        self.right = right  # Right child (subtree)
+        self.feature_index = feature_index  # The index of the feature column in the dataset
+        self.threshold = threshold  # The value of the feature used to split the data
+        self.left = left  
+        self.right = right  
         self.value = value  # Class label if node is a leaf
 
 class DecisionTree:
@@ -22,12 +22,12 @@ class DecisionTree:
         n_samples_per_class = [np.sum(y == i) for i in range(self.n_classes)]
         # If all samples belong to the same class or reached maximum depth
         if (len(np.unique(y)) == 1) or (depth == self.max_depth):
-            # Return a leaf node
             return Node(value=np.argmax(n_samples_per_class))
 
         # Find the best split
         best_gini = float('inf')
         best_feature, best_threshold = None, None
+        # Iterate over all features
         for feature_index in range(n_features):
             thresholds = np.unique(X[:, feature_index])
             for threshold in thresholds:
@@ -39,8 +39,10 @@ class DecisionTree:
                     best_feature = feature_index
                     best_threshold = threshold
 
+        # Perform the split with the best found parameters
         left_indices = np.where(X[:, best_feature] <= best_threshold)[0]
         right_indices = np.where(X[:, best_feature] > best_threshold)[0]
+
         left_subtree = self._grow_tree(X[left_indices], y[left_indices], depth + 1)
         right_subtree = self._grow_tree(X[right_indices], y[right_indices], depth + 1)
 

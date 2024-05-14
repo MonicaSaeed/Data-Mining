@@ -4,7 +4,6 @@ class NaiveBayes:
     def __init__(self):
         self.model = None
 
-    # Fit the model to the training data return matrix of probabilities for each feature(x) and for the target class(y)
     def fit(self, X, y):
         # get the number of classes in the target
         n_classes = len(np.unique(y))
@@ -42,11 +41,9 @@ class NaiveBayes:
                         continue
                     self.model[i][j][value] = prob
 
-    # Predict the target class for the input data
     def predict(self, X):
         predictions = []
         for x in X:
-            # calculate the probabilities for each class
             probs = []
             for i in range(len(self.class_probs)):
                 prob = self.class_probs[i]
@@ -56,12 +53,10 @@ class NaiveBayes:
             # get the class with the highest probability
             predictions.append(np.argmax(probs))
         return predictions
-    
-    # Calculate the accuracy of the model
+
     def accuracy(self, y_true, y_pred):
         return np.sum(y_true == y_pred) / len(y_true)
-    
-    # print the model and class probabilities
+
     def print_model(self):
         print("Class Probabilities:")
         for i in self.class_probs:

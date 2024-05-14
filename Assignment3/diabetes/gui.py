@@ -225,11 +225,23 @@ def read_data(file_path, percentage, test_size):
     for feature in categorical_features:
         categorical_encoders[feature] = LabelEncoder()
         X[feature] = categorical_encoders[feature].fit_transform(X[feature])
+    # print categorical_encoders map
+    print("Categorical Encoders: ")
+    for feature in categorical_features:
+        label_encoder = categorical_encoders[feature]
+        mapping = dict(zip(label_encoder.classes_, label_encoder.transform(label_encoder.classes_)))
+        print(f'{feature}: {mapping}')
 
     numerical_columns = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
     interval_encoders = {}
     for feature in numerical_columns:
         X[feature], interval_encoders[feature] = pd.cut(X[feature], bins=5, labels=False, retbins=True)
+    # print interval_encoders map
+    print("\nInterval Encoders: ")
+    for feature in numerical_columns:
+        label_encoder = interval_encoders[feature]
+        mapping = dict(zip(label_encoder, range(len(label_encoder))))
+        print(f'{feature}: {mapping}')
 
     # Splitting the data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
